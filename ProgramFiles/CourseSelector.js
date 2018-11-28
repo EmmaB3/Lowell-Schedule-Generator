@@ -1,5 +1,4 @@
-﻿var boxes1 = [];
-var boxes2 = [];
+﻿var boxes2 = [];
 var checkedBoxes = [];
 var selectedCourses = [];
 var page = 0;
@@ -8,38 +7,36 @@ var offBlockNum;
 var blockArrays = [];
 var schedules = [];
 var error = false;
+//<script>courseCheckboxes();</script>
+//TODO make thing that shows # of classes chosen so far that follows user as they scroll when choosing classes (or even show specific courses chosen??)-- look into using jackson's code for checking boxes
 
-function courseCheckboxes() {
-    for (var a = 0; a < deptTitles.length; a++) {
-        var header = document.createElement("h3");
-        header.innerHTML = deptTitles[a];
-        pageElements[0].push(header);
-        //document.body.appendChild(header);
-        document.getElementById("mainStuff").appendChild(header);
-        for (var b = 0; b < allCourses.length; b++) {
-            console.log("hey");
-            console.log(allCourses[b].dept);
-            if (allCourses[b].dept == a + 1) {
-                var cb = document.createElement("input");
-                cb.type = "checkbox";
-                cb.id = allCourses[b].title;
-                //cb.class = "page0";
-                pageElements[0].push(cb);
-                //document.body.appendChild(cb);
-                document.getElementById("mainStuff").appendChild(cb);
-                boxes1.push(cb);
-                var label = document.createElement("label");
-                label.for = allCourses[b].title;
-                label.innerHTML = allCourses[b].title;
-                //label.class = "page0";
-                pageElements[0].push(label);
-                //document.body.appendChild(label);
-                document.getElementById("mainStuff").appendChild(label);
-                var br = document.createElement("br");
-                //br.class = "page0";
-                pageElements[0].push(br);
-                //document.body.appendChild(br);
-                document.getElementById("mainStuff").appendChild(br);
+function checkboxPressed(box,type) {
+    checkedBoxes.push(box);
+    if (type == 0) {
+        for (a in allCourses) {
+            if (allCourses[a].title == box.id) {
+                selectedCourses.push(allCourses);
+            }
+        }
+    } else if (type == 1) {
+        for (a in selectedCourses) {
+            var teacherNameIndexes = [];
+            for (var b in selectedCourses[a].teacherNames) {
+                if (box.className == selectedCourses.title && box.id == selectedCourses[a].teacherNames[b]) {
+                    teacherNameIndexes.push(b);
+                }
+                /*for (var c = 0; c < checkedBoxes.length; c++) {
+                    if (checkedBoxes[c].className == selectedCourses[a].title && checkedBoxes[c].id == selectedCourses[a].teacherNames[b]) {
+                        teacherNameIndexes.push(b);
+                    }
+                }*/
+            }
+
+            for (var b = selectedCourses[a].teacherNames.length - 1; b >= 0; b--) {
+                if (!inArray(b, teacherNameIndexes)) {
+                    selectedCourses[a].teacherNames.splice(b, 1);
+                    selectedCourses[a].teacherBlocks.splice(b, 1);
+                }
             }
         }
     }
@@ -84,6 +81,7 @@ function teacherCheckboxes() {
             cb.type = "checkbox";
             cb.id = selectedCourses[a].teacherNames[b];
             cb.className = selectedCourses[a].title;
+            cb.setAttribute("onclick", "checkboxpressed(this, 1)");
             //cb.class = "page1";
             //document.body.appendChild(cb);
             document.getElementById("mainStuff").appendChild(cb);
@@ -109,7 +107,7 @@ function nextPage() {
     switch (page) {
         case 0:
             pageElements.push([]);
-            getSelectedCourses();
+            //getSelectedCourses();
             if (!error) {
                 document.getElementById("header").innerHTML = "Choose Your Teachers";
                 teacherCheckboxes();

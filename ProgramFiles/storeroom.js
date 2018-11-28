@@ -2,6 +2,7 @@
 var deptTitles = ["Math", "Science", "English", "History", "VPA", "World Language", "PE", "Other"];
 var currentClass = "none";
 var rawData;
+var boxes1 = [];
 
 class Course {
     constructor(title, dept, teacherNames, teacherBlocks) {
@@ -78,7 +79,7 @@ function processData() {
             currentClass = "none";
         }
     }
-    console.log(allCourses);
+    courseCheckboxes();
 }
 
 function removeDuplicates(arr) {
@@ -91,8 +92,43 @@ function removeDuplicates(arr) {
     }
 }
 
-/*let precalcH = new Course("Precalc Honors", 1, ["Li", "Gribler"], [[2, 6, 8], [3, 7]]);
-let latin3 = new Course("Latin 3", 6, ["TCHR XY"], [[2]]);
+function courseCheckboxes() {
+    for (var a = 0; a < deptTitles.length; a++) {
+        var header = document.createElement("h3");
+        header.innerHTML = deptTitles[a];
+        pageElements[0].push(header);
+        //document.body.appendChild(header);
+        document.getElementById("mainStuff").appendChild(header);
+        for (var b = 0; b < allCourses.length; b++) {
+            if (allCourses[b].dept == a + 1) {
+                var cb = document.createElement("input");
+                cb.type = "checkbox";
+                cb.id = allCourses[b].title;
+                //cb.class = "page0";
+                cb.setAttribute("onclick", "checkboxPressed(this,0)");
+                pageElements[0].push(cb);
+                //document.body.appendChild(cb);
+                document.getElementById("mainStuff").appendChild(cb);
+                boxes1.push(cb);
+                var label = document.createElement("label");
+                label.for = allCourses[b].title;
+                label.innerHTML = allCourses[b].title;
+                //label.class = "page0";
+                pageElements[0].push(label);
+                //document.body.appendChild(label);
+                document.getElementById("mainStuff").appendChild(label);
+                var br = document.createElement("br");
+                //br.class = "page0";
+                pageElements[0].push(br);
+                //document.body.appendChild(br);
+                document.getElementById("mainStuff").appendChild(br);
+            }
+        }
+    }
+}
+
+//let precalcH = new Course("Precalc Honors", 1, ["Li", "Gribler"], [[2, 6, 8], [3, 7]]);
+/*let latin3 = new Course("Latin 3", 6, ["TCHR XY"], [[2]]);
 let apPhys2 = new Course("AP Physics 2", 2, ["Cooley"], [[5, 7]]);
 let apComp = new Course("AP Comp Sci", 1, ["Simon"], [[1, 3, 6, 7]]);
 let ush = new Course("US History", 4, ["Sloan", "Furey", "Starr", "Staff B", "Prophet", "Worth"], [[1, 3], [2, 4, 8], [2, 4, 6], [3, 6, 8], [5, 7], [5, 7]]);
