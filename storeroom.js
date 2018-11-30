@@ -33,7 +33,7 @@ class Course {
 }
 
 var stuff = Tabletop.init({
-    key: '1v85ZUS42eJ2fh_kCk3VGzlp3HBWwdvN5C6hYfg3WvWE',
+    key: '15MZyJKXwPZeqJnD8_-KivR21s_akMfVue7TLdTguW-A',
     callback: processData,
     simpleSheet: true
 })

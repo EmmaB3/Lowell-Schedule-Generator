@@ -122,7 +122,6 @@ function nextPage() {
     switch (page) {
         case 0:
             pageElements.push([]);
-            console.log(selectedCourses);
             //getSelectedCourses();
             if (!error) {
                 document.getElementById("header").innerHTML = "Choose Your Teachers";
@@ -225,20 +224,24 @@ function findGoodSchedules() {
 }
 
 function displaySchedules() {
-    for (var a = 0; a < schedules.length; a++) {
-        makeHTML("h3", "Schedule " + (a + 1) + ":");
-        for (var b = 0; b < schedules[a].length; b++) {
-            teachersList = "";
-            var teachersArr = schedules[a][b].getTeachersForBlock(b + 1);
-            if (teachersArr.length == 1) {
-                teachersList = teachersArr[0];
-            } else {
-                for (var c = 0; c < teachersArr.length; c++) {
-                    //teachersList += teachersArr[c];
-                    teachersList += c == teachersArr.length - 1? teachersArr[c] : teachersArr[c] + " or ";
+    if (schedules.length == 0) {
+        errorCode("No possible schedules found. Please reload the page & try again with a wider range of options.")
+    } else {
+        for (var a = 0; a < schedules.length; a++) {
+            makeHTML("h3", "Schedule " + (a + 1) + ":");
+            for (var b = 0; b < schedules[a].length; b++) {
+                teachersList = "";
+                var teachersArr = schedules[a][b].getTeachersForBlock(b + 1);
+                if (teachersArr.length == 1) {
+                    teachersList = teachersArr[0];
+                } else {
+                    for (var c = 0; c < teachersArr.length; c++) {
+                        //teachersList += teachersArr[c];
+                        teachersList += c == teachersArr.length - 1 ? teachersArr[c] : teachersArr[c] + " or ";
+                    }
                 }
+                makeHTML("p", (b + 1) + ": " + schedules[a][b].title + (schedules[a][b].title == "OFF" ? "" : " - " + teachersList));
             }
-            makeHTML("p", (b + 1) + ": " + schedules[a][b].title + (schedules[a][b].title == "OFF"? "" : " - " + teachersList));
         }
     }
 }
@@ -315,6 +318,7 @@ function generateSchedules() {
 }
 
 function offCheckboxes() {
+    boxes1 = [];
     offBlockNum = 8 - selectedCourses.length;
     for (var a = 1; a <= offBlockNum; a++) {
         var header = document.createElement("h3");
@@ -346,7 +350,7 @@ function makeOffBlocks() {
     for (var a = 1; a <= offBlockNum; a++) {
         var singleBlock = [];
         for (var b = 0; b < 8; b++) {
-            if (boxes1[b].checked){
+            if (boxes1[b].checked) {
                 singleBlock.push(b + 1);
             }
         }
