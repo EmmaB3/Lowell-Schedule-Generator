@@ -7,39 +7,54 @@ var offBlockNum;
 var blockArrays = [];
 var schedules = [];
 var error = false;
-//<script>courseCheckboxes();</script>
-//TODO make thing that shows # of classes chosen so far that follows user as they scroll when choosing classes (or even show specific courses chosen??)-- look into using jackson's code for checking boxes
 
-function checkboxPressed(box,type) {
-    checkedBoxes.push(box);
-    if (type == 0) {
-        for (a in allCourses) {
-            if (allCourses[a].title == box.id) {
-                selectedCourses.push(allCourses);
-            }
-        }
-    } else if (type == 1) {
-        for (a in selectedCourses) {
-            var teacherNameIndexes = [];
-            for (var b in selectedCourses[a].teacherNames) {
-                if (box.className == selectedCourses.title && box.id == selectedCourses[a].teacherNames[b]) {
-                    teacherNameIndexes.push(b);
+function checkboxPressed(box, type) {
+    if (box.checked) {
+        if (type == 0) {
+            var listing = document.createElement("li");
+            listing.id = box.id + "Listing";
+            listing.innerHTML = box.id;
+            document.getElementById("classList").appendChild(listing);
+            for (a in allCourses) {
+                if (allCourses[a].title == box.id) {
+                    selectedCourses.push(allCourses[a]);
                 }
-                /*for (var c = 0; c < checkedBoxes.length; c++) {
-                    if (checkedBoxes[c].className == selectedCourses[a].title && checkedBoxes[c].id == selectedCourses[a].teacherNames[b]) {
+            }
+            if (selectedCourses.length > 8 && !error) {
+                errorCode("It appears you've chosen too many classes! Please de-select any excess ones to continue");
+            }
+        } /*else if (type == 1) {
+            for (a in selectedCourses) {
+                var teacherNameIndexes = [];
+                for (var b in selectedCourses[a].teacherNames) {
+                    if (box.className == selectedCourses.title && box.id == selectedCourses[a].teacherNames[b]) {
                         teacherNameIndexes.push(b);
                     }
-                }*/
+                }
+                for (var b = selectedCourses[a].teacherNames.length - 1; b >= 0; b--) {
+                    if (!inArray(b, teacherNameIndexes)) {
+                        selectedCourses[a].teacherNames.splice(b, 1);
+                        selectedCourses[a].teacherBlocks.splice(b, 1);
+                    }
+                }
+                console.log(selectedCourses[a].teacherNames);
             }
-
-            for (var b = selectedCourses[a].teacherNames.length - 1; b >= 0; b--) {
-                if (!inArray(b, teacherNameIndexes)) {
-                    selectedCourses[a].teacherNames.splice(b, 1);
-                    selectedCourses[a].teacherBlocks.splice(b, 1);
+        }*/
+    } else if (!box.checked) {
+        if (type == 0) {
+            for (var a = selectedCourses.length - 1; a >= 0; a--) {
+                if (selectedCourses[a].title == box.id) {
+                    selectedCourses.splice(a, 1);
                 }
             }
-        }
-    }
+            document.getElementById("classList").removeChild(document.getElementById(box.id + "Listing"));
+            if (error && selectedCourses.length <= 8) {
+                removeError();
+            }
+        }/*else if (type == 1) {
+            console.log("hey");
+        }*/
+    } 
 }
 
 function getSelectedCourses() {
@@ -81,7 +96,7 @@ function teacherCheckboxes() {
             cb.type = "checkbox";
             cb.id = selectedCourses[a].teacherNames[b];
             cb.className = selectedCourses[a].title;
-            cb.setAttribute("onclick", "checkboxpressed(this, 1)");
+            //cb.setAttribute("onclick", "checkboxPressed(this, 1)");
             //cb.class = "page1";
             //document.body.appendChild(cb);
             document.getElementById("mainStuff").appendChild(cb);
@@ -107,6 +122,7 @@ function nextPage() {
     switch (page) {
         case 0:
             pageElements.push([]);
+            console.log(selectedCourses);
             //getSelectedCourses();
             if (!error) {
                 document.getElementById("header").innerHTML = "Choose Your Teachers";
@@ -156,16 +172,25 @@ function makeBlockArrays() {
 }
 
 function errorCode(message) {
+    error = true;
     var eHeader = document.createElement("h2");
     eHeader.innerHTML = "Error";
+    eHeader.id = "eHeader";
     //eHeader.className = "error";
     document.getElementById("error").appendChild(eHeader);
     pageElements[page].push(eHeader);
     var eMessage = document.createElement("p");
     eMessage.innerHTML = message;
+    eMessage.id = "eMessage";
     //eMessage.className = "error";
     document.getElementById("error").appendChild(eMessage);
     pageElements[page].push(eMessage);
+}
+
+function removeError() {
+    error = false;
+    document.getElementById("error").removeChild(document.getElementById("eHeader"));
+    document.getElementById("error").removeChild(document.getElementById("eMessage"));
 }
 
 function tryAgainButton() {
@@ -203,11 +228,13 @@ function displaySchedules() {
     for (var a = 0; a < schedules.length; a++) {
         makeHTML("h3", "Schedule " + (a + 1) + ":");
         for (var b = 0; b < schedules[a].length; b++) {
+            teachersList = "";
             var teachersArr = schedules[a][b].getTeachersForBlock(b + 1);
             if (teachersArr.length == 1) {
                 teachersList = teachersArr[0];
             } else {
                 for (var c = 0; c < teachersArr.length; c++) {
+                    //teachersList += teachersArr[c];
                     teachersList += c == teachersArr.length - 1? teachersArr[c] : teachersArr[c] + " or ";
                 }
             }
